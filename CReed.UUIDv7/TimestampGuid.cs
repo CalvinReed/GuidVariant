@@ -1,5 +1,4 @@
 using System.Buffers.Binary;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 
@@ -40,7 +39,7 @@ public static class TimestampGuid
     public static bool TryGetTimestamp(Guid guid, out DateTimeOffset timestamp)
     {
         Span<byte> span = stackalloc byte[16];
-        if (!guid.TryWriteBytes(span, true, out _)) throw new UnreachableException();
+        guid.TryWriteBytes(span, true, out _);
         var front = BinaryPrimitives.ReadInt64BigEndian(span);
         if ((front & 0xF000) != 0x7000)
         {

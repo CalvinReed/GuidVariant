@@ -1,5 +1,3 @@
-using System.Buffers.Binary;
-
 namespace CReed.UUIDv7.Test;
 
 public class TimestampGuidMust
@@ -10,9 +8,7 @@ public class TimestampGuidMust
         var guid = TimestampGuid.NextGuid();
         Span<byte> span = stackalloc byte[16];
         guid.TryWriteBytes(span, true, out _);
-        var front = BinaryPrimitives.ReadInt64BigEndian(span);
-        var version = front >>> 12 & 0x0F;
-        Assert.Equal(7, version);
+        Assert.Equal(0x70, span[6] & 0xF0);
     }
 
     [Fact]
@@ -21,9 +17,7 @@ public class TimestampGuidMust
         var guid = TimestampGuid.NextGuid();
         Span<byte> span = stackalloc byte[16];
         guid.TryWriteBytes(span, true, out _);
-        var back = BinaryPrimitives.ReadInt64BigEndian(span[8..]);
-        var variant = back >>> 62;
-        Assert.Equal(0b10, variant);
+        Assert.Equal(0b1000_0000, span[8] & 0b1100_0000);
     }
 
     [Fact]
