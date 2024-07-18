@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 
-namespace CReed.TimestampGuid;
+namespace CReed;
 
 public static class TimestampGuid
 {
