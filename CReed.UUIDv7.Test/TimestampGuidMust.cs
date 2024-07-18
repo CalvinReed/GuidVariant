@@ -47,16 +47,12 @@ public class TimestampGuidMust
     [Fact]
     public void BeMonotonic()
     {
-        var prev = TimestampGuid.NextGuid();
+        var previous = TimestampGuid.NextGuid();
         for (var i = 0; i < Trials; i++)
         {
             var current = TimestampGuid.NextGuid();
-            if (prev >= current)
-            {
-                Assert.Fail($"Generated Guids must be greater than those previously generated.\nFirst:  {prev}\nSecond: {current}");
-            }
-
-            prev = current;
+            Assert.True(previous < current);
+            previous = current;
         }
     }
 }
