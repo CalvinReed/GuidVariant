@@ -10,7 +10,7 @@ public class TimestampGuidMust
         Span<byte> span = stackalloc byte[16];
         for (var i = 0; i < Trials; i++)
         {
-            TimestampGuid.NextGuid().TryWriteBytes(span, true, out _);
+            Assert.True(TimestampGuid.NextGuid().TryWriteBytes(span, true, out _));
             Assert.Equal(0x70, span[6] & 0xF0);
         }
     }
@@ -21,7 +21,7 @@ public class TimestampGuidMust
         Span<byte> span = stackalloc byte[16];
         for (var i = 0; i < Trials; i++)
         {
-            TimestampGuid.NextGuid().TryWriteBytes(span, true, out _);
+            Assert.True(TimestampGuid.NextGuid().TryWriteBytes(span, true, out _));
             Assert.Equal(0b1000_0000, span[8] & 0b1100_0000);
         }
     }
