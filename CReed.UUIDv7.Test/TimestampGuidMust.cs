@@ -45,8 +45,11 @@ public class TimestampGuidMust
         for (var i = 0; i < 1_000_000; i++)
         {
             var current = TimestampGuid.NextGuid();
-            Assert.NotEqual(prev, current);
-            Assert.True(prev < current);
+            if (prev >= current)
+            {
+                Assert.Fail($"Generated Guids must be greater than those previously generated.\nFirst:  {prev}\nSecond: {current}");
+            }
+
             prev = current;
         }
     }
