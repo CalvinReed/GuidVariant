@@ -16,39 +16,16 @@ public static class TimestampGuid
     }
 
     [Pure]
-    public static DateTimeOffset GetTimestamp(Guid guid)
-    {
-        if (TryGetTimestamp(guid, out var timestamp))
-        {
-            return timestamp;
-        }
-
-        var message = $"\"{guid}\" is not a valid timestamp Guid.";
-        throw new ArgumentException(message, nameof(guid));
-    }
-
-    [Pure]
-    public static DateTimeOffset? TryGetTimestamp(Guid guid)
-    {
-        return TryGetTimestamp(guid, out var timestamp)
-            ? timestamp
-            : null;
-    }
-
-    [Pure]
-    public static bool TryGetTimestamp(Guid guid, out DateTimeOffset timestamp)
+    public static bool TryGetTimestamp(this Guid guid, out DateTimeOffset timestamp)
     {
         Span<byte> span = stackalloc byte[16];
         guid.TryWriteBytes(span, true, out _);
         var front = BinaryPrimitives.ReadInt64BigEndian(span);
-        if ((front & 0xF000) != 0x7000)
-        {
-            timestamp = default;
-            return false;
-        }
-
-        timestamp = DateTimeOffset.FromUnixTimeMilliseconds(front >>> 16);
-        return true;
+        var hasTimestamp = (front & 0xF000) == 0x7000;
+        timestamp = hasTimestamp
+            ? DateTimeOffset.FromUnixTimeMilliseconds(front >>> 16)
+            : default;
+        return hasTimestamp;
     }
 
     private sealed class Factory
