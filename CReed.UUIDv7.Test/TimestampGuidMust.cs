@@ -51,7 +51,9 @@ public class TimestampGuidMust
         for (var i = 0; i < 1_000_000; i++)
         {
             var current = TimestampGuid.NextGuid();
+            Assert.NotEqual(prev, current);
             Assert.True(prev < current);
+            prev = current;
         }
     }
 }
