@@ -2,22 +2,28 @@ namespace CReed.UUIDv7.Test;
 
 public class TimestampGuidMust
 {
+    private const int Trials = 1_000_000;
+
     [Fact]
     public void HaveCorrectVersion()
     {
-        var guid = TimestampGuid.NextGuid();
         Span<byte> span = stackalloc byte[16];
-        guid.TryWriteBytes(span, true, out _);
-        Assert.Equal(0x70, span[6] & 0xF0);
+        for (var i = 0; i < Trials; i++)
+        {
+            TimestampGuid.NextGuid().TryWriteBytes(span, true, out _);
+            Assert.Equal(0x70, span[6] & 0xF0);
+        }
     }
 
     [Fact]
     public void HaveCorrectVariant()
     {
-        var guid = TimestampGuid.NextGuid();
         Span<byte> span = stackalloc byte[16];
-        guid.TryWriteBytes(span, true, out _);
-        Assert.Equal(0b1000_0000, span[8] & 0b1100_0000);
+        for (var i = 0; i < Trials; i++)
+        {
+            TimestampGuid.NextGuid().TryWriteBytes(span, true, out _);
+            Assert.Equal(0b1000_0000, span[8] & 0b1100_0000);
+        }
     }
 
     [Fact]
@@ -42,7 +48,7 @@ public class TimestampGuidMust
     public void BeMonotonic()
     {
         var prev = TimestampGuid.NextGuid();
-        for (var i = 0; i < 1_000_000; i++)
+        for (var i = 0; i < Trials; i++)
         {
             var current = TimestampGuid.NextGuid();
             if (prev >= current)
