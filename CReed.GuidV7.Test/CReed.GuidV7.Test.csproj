@@ -7,6 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <RootNamespace>CReed.Test</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CReed.UUIDv7\CReed.UUIDv7.csproj" />
+      <ProjectReference Include="..\CReed.GuidV7\CReed.GuidV7.csproj" />
     </ItemGroup>
 
 </Project>

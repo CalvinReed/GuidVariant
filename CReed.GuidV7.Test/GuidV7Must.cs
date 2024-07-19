@@ -1,4 +1,4 @@
-namespace CReed.UUIDv7.Test;
+namespace CReed.Test;
 
 public class GuidV7Must
 {
