@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace CReed;
 
-public static class TimestampGuid
+public static class GuidV7
 {
     [ThreadStatic] private static Factory? factory;
 
@@ -16,18 +16,6 @@ public static class TimestampGuid
     }
 
     [Pure]
-    public static bool TryGetTimestamp(this Guid guid, out DateTimeOffset timestamp)
-    {
-        Span<byte> span = stackalloc byte[16];
-        guid.TryWriteBytes(span, true, out _);
-        var front = BinaryPrimitives.ReadInt64BigEndian(span);
-        var hasTimestamp = (front & 0xF000) == 0x7000;
-        timestamp = hasTimestamp
-            ? DateTimeOffset.FromUnixTimeMilliseconds(front >>> 16)
-            : default;
-        return hasTimestamp;
-    }
-
     private sealed class Factory
     {
         private const int CounterMax = 0x0FFF;

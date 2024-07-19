@@ -1,6 +1,6 @@
 namespace CReed.UUIDv7.Test;
 
-public class TimestampGuidMust
+public class GuidV7Must
 {
     private const int Trials = 1_000_000;
 
@@ -10,7 +10,7 @@ public class TimestampGuidMust
         Span<byte> span = stackalloc byte[16];
         for (var i = 0; i < Trials; i++)
         {
-            var guid = TimestampGuid.NextGuid();
+            var guid = GuidV7.NextGuid();
             Assert.True(guid.TryWriteBytes(span, true, out _));
             Assert.Equal(0x70, span[6] & 0xF0); // version
             Assert.Equal(0b1000_0000, span[8] & 0b1100_0000); // variant
@@ -18,28 +18,12 @@ public class TimestampGuidMust
     }
 
     [Fact]
-    public void HaveCorrectTimestamp()
-    {
-        var now = DateTimeOffset.UtcNow;
-        var guid = TimestampGuid.NextGuid();
-        Assert.True(guid.TryGetTimestamp(out var timestamp));
-        Assert.Equal(now, timestamp, TimeSpan.FromMilliseconds(1));
-    }
-
-    [Fact]
-    public void RejectInvalidGuids()
-    {
-        var guid = Guid.NewGuid();
-        Assert.False(guid.TryGetTimestamp(out _));
-    }
-
-    [Fact]
     public void BeMonotonic()
     {
-        var previous = TimestampGuid.NextGuid();
+        var previous = GuidV7.NextGuid();
         for (var i = 0; i < Trials; i++)
         {
-            var current = TimestampGuid.NextGuid();
+            var current = GuidV7.NextGuid();
             Assert.True(previous < current);
             previous = current;
         }
