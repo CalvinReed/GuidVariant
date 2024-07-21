@@ -2,7 +2,7 @@ using Xunit.Abstractions;
 
 namespace CReed.Test;
 
-public class GuidV7Must(ITestOutputHelper outputHelper)
+public class GuidV7Must(ITestOutputHelper output)
 {
     private const int Trials = 1_000_000;
 
@@ -42,20 +42,20 @@ public class GuidV7Must(ITestOutputHelper outputHelper)
     [Fact]
     public async Task LookNice()
     {
-        outputHelper.WriteLine("[Sequential]");
+        output.WriteLine("[Sequential]");
         for (var i = 0; i < 10; i++)
         {
             var guid = GuidV7.NextGuid();
-            outputHelper.WriteLine(guid.ToString());
+            output.WriteLine(guid.ToString());
         }
 
-        outputHelper.WriteLine(string.Empty);
-        outputHelper.WriteLine("[Spaced]");
+        output.WriteLine(string.Empty);
+        output.WriteLine("[Spaced]");
         for (var i = 0; i < 10; i++)
         {
             await Task.Delay(100);
             var guid = GuidV7.NextGuid();
-            outputHelper.WriteLine(guid.ToString());
+            output.WriteLine(guid.ToString());
         }
     }
 }
