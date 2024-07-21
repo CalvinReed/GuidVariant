@@ -20,11 +20,19 @@ public class GuidV7Must(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public void BeMonotonic()
+    public async Task BeMonotonic()
     {
         var previous = GuidV7.NextGuid();
         for (var i = 0; i < Trials; i++)
         {
+            var current = GuidV7.NextGuid();
+            Assert.True(previous < current);
+            previous = current;
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            await Task.Delay(100);
             var current = GuidV7.NextGuid();
             Assert.True(previous < current);
             previous = current;

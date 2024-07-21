@@ -6,13 +6,15 @@ namespace CReed;
 
 public static class GuidV7
 {
-    [ThreadStatic] private static Factory? factory;
+    private static readonly Factory Instance = new();
 
     [Pure]
     public static Guid NextGuid()
     {
-        factory ??= new Factory();
-        return factory.Next();
+        lock (Instance)
+        {
+            return Instance.Next();
+        }
     }
 
     [Pure]
