@@ -73,8 +73,7 @@ public static class GuidV7
 
         private void ResetCounter()
         {
-            // Leave leading bit open to reduce overflow into timestamp
-            counter = RandomNumberGenerator.GetInt32(CounterMax - 0x07FF);
+            counter = RandomNumberGenerator.GetInt32(CounterMax + 1);
         }
     }
 }
