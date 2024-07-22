@@ -18,6 +18,18 @@ public static class GuidV7
     }
 
     [Pure]
+    public static Guid NewGuid()
+    {
+        Span<byte> span = stackalloc byte[16];
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        BinaryPrimitives.WriteInt64BigEndian(span, timestamp << 16);
+        RandomNumberGenerator.Fill(span[6..]);
+        span[6] = (byte)(span[6] & 0x0F | 0x70);
+        span[8] = (byte)(span[8] & 0x3F | 0x80);
+        return new Guid(span, true);
+    }
+
+    [Pure]
     private sealed class Factory
     {
         private const int CounterMax = 0x0FFF;
