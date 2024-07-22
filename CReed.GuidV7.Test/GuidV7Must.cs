@@ -7,14 +7,19 @@ public class GuidV7Must
     [Fact]
     public void HaveCorrectMarkers()
     {
-        Span<byte> span = stackalloc byte[16];
         for (var i = 0; i < Trials; i++)
         {
-            var guid = GuidV7.NextGuid();
-            Assert.True(guid.TryWriteBytes(span, true, out _));
-            Assert.Equal(0x70, span[6] & 0xF0); // version
-            Assert.Equal(0b1000_0000, span[8] & 0b1100_0000); // variant
+            ValidateMarkers(GuidV7.NextGuid());
+            ValidateMarkers(GuidV7.NewGuid());
         }
+    }
+
+    private static void ValidateMarkers(Guid guid)
+    {
+        Span<byte> span = stackalloc byte[16];
+        Assert.True(guid.TryWriteBytes(span, true, out _));
+        Assert.Equal(0x70, span[6] & 0xF0); // version
+        Assert.Equal(0b1000_0000, span[8] & 0b1100_0000); // variant
     }
 
     [Fact]
