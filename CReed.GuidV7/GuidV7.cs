@@ -6,15 +6,13 @@ namespace CReed;
 
 public static class GuidV7
 {
-    private static readonly Factory Instance = new();
+    [ThreadStatic] private static Factory? factory;
 
     [Pure]
     public static Guid NextGuid()
     {
-        lock (Instance)
-        {
-            return Instance.Next();
-        }
+        factory ??= new Factory();
+        return factory.Next();
     }
 
     [Pure]
@@ -45,20 +43,23 @@ public static class GuidV7
 
         private void Increment()
         {
-            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            if (now > timestamp)
+            while (true)
             {
-                timestamp = now;
-                ResetCounter();
-            }
-            else if (counter < CounterMax)
-            {
-                counter++;
-            }
-            else
-            {
-                timestamp++;
-                ResetCounter();
+                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                if (now != timestamp)
+                {
+                    timestamp = now;
+                    ResetCounter();
+                    return;
+                }
+
+                if (counter < CounterMax)
+                {
+                    counter++;
+                    return;
+                }
+
+                Thread.Sleep(1);
             }
         }
 
