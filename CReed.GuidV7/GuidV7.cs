@@ -49,7 +49,7 @@ public static class GuidV7
                 if (now != timestamp)
                 {
                     timestamp = now;
-                    ResetCounter();
+                    counter = RandomNumberGenerator.GetInt32(CounterMax + 1);
                     return;
                 }
 
@@ -70,11 +70,6 @@ public static class GuidV7
             RandomNumberGenerator.Fill(span[8..]);
             span[8] = (byte)(span[8] & 0x3F | 0x80);
             return new Guid(span, true);
-        }
-
-        private void ResetCounter()
-        {
-            counter = RandomNumberGenerator.GetInt32(CounterMax + 1);
         }
     }
 }
