@@ -22,7 +22,8 @@ public class NewGuidBatchMust
     [Fact]
     public void BeMonotonic()
     {
-        var batch = GuidV7.NewGuidBatch(1_000_000);
+        var batch = new Guid[1_000_000];
+        GuidV7.NewGuidBatch(batch);
         for (var i = 1; i < batch.Length; i++)
         {
             Assert.True(batch[i - 1] < batch[i]);

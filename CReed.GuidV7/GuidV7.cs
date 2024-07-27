@@ -18,16 +18,6 @@ public static class GuidV7
         return new Guid(span, true);
     }
 
-    [Pure]
-    public static Guid[] NewGuidBatch(int count)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(count);
-        if (count == 0) return [];
-        var batch = new Guid[count];
-        NewGuidBatch(batch);
-        return batch;
-    }
-
     public static void NewGuidBatch(Span<Guid> span)
     {
         const int counterMax = 0x1000;
