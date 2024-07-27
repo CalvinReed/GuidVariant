@@ -6,17 +6,6 @@ namespace CReed;
 
 public static class GuidV7
 {
-    private static readonly Factory FactoryInstance = new();
-
-    [Pure]
-    public static Guid NextGuid()
-    {
-        lock (FactoryInstance)
-        {
-            return FactoryInstance.Next();
-        }
-    }
-
     [Pure]
     public static Guid NewGuid()
     {
@@ -29,45 +18,31 @@ public static class GuidV7
         return new Guid(span, true);
     }
 
-    private sealed class Factory
+    [Pure]
+    public static Guid[] NewGuidBatch(int count)
     {
-        private const int CounterMax = 0x0FFF;
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+        if (count == 0) return [];
+        var batch = new Guid[count];
+        NewGuidBatch(batch);
+        return batch;
+    }
 
-        private long timestamp;
-        private long counter;
-
-        public Guid Next()
+    public static void NewGuidBatch(Span<Guid> span)
+    {
+        const int counterMax = 0x1000;
+        Span<byte> buffer = stackalloc byte[16];
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        long counter = RandomNumberGenerator.GetInt32(counterMax);
+        foreach (ref var guid in span)
         {
-            Increment();
-            return GenerateGuid();
-        }
-
-        private void Increment()
-        {
-            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            if (now > timestamp)
-            {
-                timestamp = now;
-                counter = RandomNumberGenerator.GetInt32(CounterMax + 1);
-            }
-            else if (counter < CounterMax)
-            {
-                counter++;
-            }
-            else
-            {
-                timestamp++;
-                counter = RandomNumberGenerator.GetInt32(CounterMax + 1);
-            }
-        }
-
-        private Guid GenerateGuid()
-        {
-            Span<byte> span = stackalloc byte[16];
-            BinaryPrimitives.WriteInt64BigEndian(span, timestamp << 16 | 0x7000 | counter);
-            RandomNumberGenerator.Fill(span[8..]);
-            span[8] = (byte)(span[8] & 0x3F | 0x80);
-            return new Guid(span, true);
+            BinaryPrimitives.WriteInt64BigEndian(buffer, timestamp << 16 | 0x7000 | counter);
+            RandomNumberGenerator.Fill(buffer[8..]);
+            buffer[8] = (byte)(buffer[8] & 0x3F | 0x80);
+            guid = new Guid(buffer, true);
+            if (++counter < counterMax) continue;
+            timestamp++;
+            counter = RandomNumberGenerator.GetInt32(counterMax);
         }
     }
 }
