@@ -6,13 +6,15 @@ namespace CReed;
 
 public static class GuidV7
 {
-    [ThreadStatic] private static Factory? factory;
+    private static readonly Factory FactoryInstance = new();
 
     [Pure]
     public static Guid NextGuid()
     {
-        factory ??= new Factory();
-        return factory.Next();
+        lock (FactoryInstance)
+        {
+            return FactoryInstance.Next();
+        }
     }
 
     [Pure]
@@ -27,7 +29,6 @@ public static class GuidV7
         return new Guid(span, true);
     }
 
-    [Pure]
     private sealed class Factory
     {
         private const int CounterMax = 0x0FFF;
@@ -43,23 +44,20 @@ public static class GuidV7
 
         private void Increment()
         {
-            while (true)
+            var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (now > timestamp)
             {
-                var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                if (now != timestamp)
-                {
-                    timestamp = now;
-                    counter = RandomNumberGenerator.GetInt32(CounterMax + 1);
-                    return;
-                }
-
-                if (counter < CounterMax)
-                {
-                    counter++;
-                    return;
-                }
-
-                Thread.Sleep(1);
+                timestamp = now;
+                counter = RandomNumberGenerator.GetInt32(CounterMax + 1);
+            }
+            else if (counter < CounterMax)
+            {
+                counter++;
+            }
+            else
+            {
+                timestamp++;
+                counter = RandomNumberGenerator.GetInt32(CounterMax + 1);
             }
         }
 
