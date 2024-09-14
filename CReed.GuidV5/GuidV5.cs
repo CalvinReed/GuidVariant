@@ -29,30 +29,27 @@ public static class GuidV5
 
     private sealed class ShimStream(Guid @namespace, ReadOnlyMemory<byte> data) : Stream
     {
+        private bool namespaceRead;
         private int bytesRead;
 
         public override int Read(Span<byte> buffer)
         {
-            if (bytesRead != 0)
+            if (namespaceRead)
             {
-                return ReadInternal(buffer);
+                var end = Math.Min(data.Length, bytesRead + buffer.Length);
+                var slice = data.Span[bytesRead..end];
+                slice.CopyTo(buffer);
+                bytesRead = end;
+                return slice.Length;
             }
 
-            if (@namespace.TryWriteBytes(buffer, true, out _))
+            if (!@namespace.TryWriteBytes(buffer, true, out var namespaceBytes))
             {
-                return 16 + ReadInternal(buffer[16..]);
+                throw new UnreachableException();
             }
 
-            throw new UnreachableException();
-        }
-
-        private int ReadInternal(Span<byte> buffer)
-        {
-            var end = Math.Min(data.Length, bytesRead + buffer.Length);
-            var slice = data.Span[bytesRead..end];
-            slice.CopyTo(buffer);
-            bytesRead = end;
-            return slice.Length;
+            namespaceRead = true;
+            return namespaceBytes;
         }
 
         public override void Flush() => throw new UnreachableException();
