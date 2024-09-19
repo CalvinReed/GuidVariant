@@ -7,10 +7,10 @@ namespace CReed;
 public static class GuidV5
 {
     [Pure]
-    public static Guid NewGuid(Guid @namespace, ReadOnlyMemory<byte> data)
+    public static Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
     {
         Span<byte> hash = stackalloc byte[20];
-        using var stream = new ShimStream(@namespace, data);
+        using var stream = new ShimStream(prefix, data);
         SHA1.HashData(stream, hash);
         hash[6] = (byte)(hash[6] & 0x0F | 0x50);
         hash[8] = (byte)(hash[8] & 0x3F | 0x80);
@@ -27,14 +27,14 @@ public static class GuidV5
         return new Guid(hash[..16], true);
     }
 
-    private sealed class ShimStream(Guid @namespace, ReadOnlyMemory<byte> data) : Stream
+    private sealed class ShimStream(Guid prefix, ReadOnlyMemory<byte> data) : Stream
     {
-        private bool namespaceRead;
+        private bool prefixRead;
         private int bytesRead;
 
         public override int Read(Span<byte> buffer)
         {
-            if (namespaceRead)
+            if (prefixRead)
             {
                 var end = Math.Min(data.Length, bytesRead + buffer.Length);
                 var slice = data.Span[bytesRead..end];
@@ -43,13 +43,13 @@ public static class GuidV5
                 return slice.Length;
             }
 
-            if (!@namespace.TryWriteBytes(buffer, true, out var namespaceBytes))
+            if (prefix.TryWriteBytes(buffer, true, out var bytesWritten))
             {
-                throw new UnreachableException();
+                prefixRead = true;
+                return bytesWritten;
             }
 
-            namespaceRead = true;
-            return namespaceBytes;
+            throw new UnreachableException();
         }
 
         public override void Flush() => throw new UnreachableException();
