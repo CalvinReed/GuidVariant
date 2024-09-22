@@ -6,14 +6,30 @@ namespace CReed;
 
 public static class GuidV5
 {
+    public static async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data)
+    {
+        await using var shim = new StreamShim(prefix, data);
+        var hash = await SHA1.HashDataAsync(shim);
+        WriteMarkers(hash);
+        return new Guid(hash.AsSpan(..16), true);
+    }
+
+    public static Guid NewGuid(Guid prefix, Stream data)
+    {
+        Span<byte> hash = stackalloc byte[20];
+        using var shim = new StreamShim(prefix, data);
+        SHA1.HashData(shim, hash);
+        WriteMarkers(hash);
+        return new Guid(hash[..16], true);
+    }
+
     [Pure]
     public static Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
     {
         Span<byte> hash = stackalloc byte[20];
-        using var stream = new MemoryShim(prefix, data);
-        SHA1.HashData(stream, hash);
-        hash[6] = (byte)(hash[6] & 0x0F | 0x50);
-        hash[8] = (byte)(hash[8] & 0x3F | 0x80);
+        using var shim = new MemoryShim(prefix, data);
+        SHA1.HashData(shim, hash);
+        WriteMarkers(hash);
         return new Guid(hash[..16], true);
     }
 
@@ -22,9 +38,41 @@ public static class GuidV5
     {
         Span<byte> hash = stackalloc byte[20];
         SHA1.HashData(data, hash);
+        WriteMarkers(hash);
+        return new Guid(hash[..16], true);
+    }
+
+    private static void WriteMarkers(Span<byte> hash)
+    {
         hash[6] = (byte)(hash[6] & 0x0F | 0x50);
         hash[8] = (byte)(hash[8] & 0x3F | 0x80);
-        return new Guid(hash[..16], true);
+    }
+
+    private sealed class StreamShim(Guid prefix, Stream data) : Shim(prefix)
+    {
+        public override int Read(Span<byte> buffer)
+        {
+            var prefixBytesRead = base.Read(buffer);
+            if (prefixBytesRead != 0)
+            {
+                return prefixBytesRead;
+            }
+
+            var bytesRead = data.Read(buffer);
+            return bytesRead;
+        }
+
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            var prefixBytesRead = base.Read(buffer.Span);
+            if (prefixBytesRead != 0)
+            {
+                return prefixBytesRead;
+            }
+
+            var bytesRead = await data.ReadAsync(buffer, cancellationToken);
+            return bytesRead;
+        }
     }
 
     private sealed class MemoryShim(Guid prefix, ReadOnlyMemory<byte> data) : Shim(prefix)
