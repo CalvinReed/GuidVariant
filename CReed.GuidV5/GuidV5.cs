@@ -58,8 +58,7 @@ public static class GuidV5
                 return prefixBytesRead;
             }
 
-            var bytesRead = data.Read(buffer);
-            return bytesRead;
+            return data.Read(buffer);
         }
 
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
@@ -70,8 +69,7 @@ public static class GuidV5
                 return prefixBytesRead;
             }
 
-            var bytesRead = await data.ReadAsync(buffer, cancellationToken);
-            return bytesRead;
+            return await data.ReadAsync(buffer, cancellationToken);
         }
     }
 
