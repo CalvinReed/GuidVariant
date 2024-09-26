@@ -6,14 +6,6 @@ namespace CReed;
 
 public static class GuidV5
 {
-    public static async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data)
-    {
-        await using var shim = new StreamShim(prefix, data);
-        var hash = await SHA1.HashDataAsync(shim);
-        WriteMarkers(hash);
-        return new Guid(hash.AsSpan(..16), true);
-    }
-
     public static Guid NewGuid(Guid prefix, Stream data)
     {
         Span<byte> hash = stackalloc byte[20];
@@ -21,6 +13,14 @@ public static class GuidV5
         SHA1.HashData(shim, hash);
         WriteMarkers(hash);
         return new Guid(hash[..16], true);
+    }
+
+    public static async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data)
+    {
+        await using var shim = new StreamShim(prefix, data);
+        var hash = await SHA1.HashDataAsync(shim);
+        WriteMarkers(hash);
+        return new Guid(hash.AsSpan(..16), true);
     }
 
     [Pure]
