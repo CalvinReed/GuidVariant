@@ -12,16 +12,14 @@ public static class GuidV5
         Span<byte> hash = stackalloc byte[20];
         using var shim = new StreamShim(prefix, data);
         SHA1.HashData(shim, hash);
-        WriteMarkers(hash);
-        return new Guid(hash[..16], true);
+        return YieldGuid(hash);
     }
 
     public static async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data)
     {
         await using var shim = new StreamShim(prefix, data);
         var hash = await SHA1.HashDataAsync(shim);
-        WriteMarkers(hash);
-        return new Guid(hash.AsSpan(..16), true);
+        return YieldGuid(hash);
     }
 
     [Pure]
@@ -30,8 +28,7 @@ public static class GuidV5
         Span<byte> hash = stackalloc byte[20];
         using var shim = new MemoryShim(prefix, data);
         SHA1.HashData(shim, hash);
-        WriteMarkers(hash);
-        return new Guid(hash[..16], true);
+        return YieldGuid(hash);
     }
 
     [Pure]
@@ -55,14 +52,14 @@ public static class GuidV5
     {
         Span<byte> hash = stackalloc byte[20];
         SHA1.HashData(data, hash);
-        WriteMarkers(hash);
-        return new Guid(hash[..16], true);
+        return YieldGuid(hash);
     }
 
-    private static void WriteMarkers(Span<byte> hash)
+    private static Guid YieldGuid(Span<byte> hash)
     {
         hash[6] = (byte)(hash[6] & 0x0F | 0x50);
         hash[8] = (byte)(hash[8] & 0x3F | 0x80);
+        return new Guid(hash[..16], true);
     }
 
     private sealed class StreamShim(Guid prefix, Stream data) : Shim(prefix)
