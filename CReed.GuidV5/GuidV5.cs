@@ -34,17 +34,14 @@ public static class GuidV5
     [Pure]
     public static Guid NewGuid(Guid prefix, ReadOnlySpan<byte> data)
     {
-        const int stackAllocMax = 0x400;
-        var totalLength = data.Length + 16;
-        using var owner = totalLength > stackAllocMax
-            ? MemoryPool<byte>.Shared.Rent(totalLength)
-            : null;
-        var buffer = owner is not null
-            ? owner.Memory.Span
-            : stackalloc byte[stackAllocMax];
-        prefix.TryWriteBytes(buffer, true, out _);
-        data.CopyTo(buffer[16..]);
-        return NewGuid(buffer[..totalLength]);
+        Span<byte> buffer = stackalloc byte[0x400];
+        prefix.TryWriteBytes(buffer, true, out var prefixLength);
+        if (data.TryCopyTo(buffer[prefixLength..]))
+        {
+            return NewGuid(buffer[..(prefixLength + data.Length)]);
+        }
+
+        throw new ArgumentException("Data span too large. Try using NewGuid(Guid prefix, ReadOnlyMemory<byte> data).");
     }
 
     [Pure]
