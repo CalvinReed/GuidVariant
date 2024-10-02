@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
@@ -22,6 +23,9 @@ public static class GuidV5
     }
 
     [Pure]
+    public static Guid NewGuid(Guid prefix, byte[] data) => NewGuid(prefix, (ReadOnlyMemory<byte>)data);
+
+    [Pure]
     public static Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
     {
         Span<byte> hash = stackalloc byte[20];
@@ -33,14 +37,11 @@ public static class GuidV5
     [Pure]
     public static Guid NewGuid(Guid prefix, ReadOnlySpan<byte> data)
     {
-        Span<byte> buffer = stackalloc byte[0x400];
-        prefix.TryWriteBytes(buffer, true, out var prefixLength);
-        if (data.TryCopyTo(buffer[prefixLength..]))
-        {
-            return NewGuid(buffer[..(prefixLength + data.Length)]);
-        }
-
-        throw new ArgumentException("Data span too large. Try using NewGuid(Guid prefix, ReadOnlyMemory<byte> data).");
+        var totalLen = 16 + data.Length;
+        using var owner = MemoryPool<byte>.Shared.Rent(totalLen);
+        prefix.TryWriteBytes(owner.Memory.Span, true, out _);
+        data.CopyTo(owner.Memory.Span[16..]);
+        return NewGuid(owner.Memory.Span[..totalLen]);
     }
 
     [Pure]
