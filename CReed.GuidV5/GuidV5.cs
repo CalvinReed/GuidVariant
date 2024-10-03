@@ -22,9 +22,6 @@ public static class GuidV5
     }
 
     [Pure]
-    public static Guid NewGuid(Guid prefix, byte[] data) => NewGuid(prefix, (ReadOnlyMemory<byte>)data);
-
-    [Pure]
     public static Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
     {
         Span<byte> hash = stackalloc byte[20];
