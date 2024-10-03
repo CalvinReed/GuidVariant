@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
@@ -32,16 +31,6 @@ public static class GuidV5
         using var shim = new MemoryShim(prefix, data);
         SHA1.HashData(shim, hash);
         return YieldGuid(hash);
-    }
-
-    [Pure]
-    public static Guid NewGuid(Guid prefix, ReadOnlySpan<byte> data)
-    {
-        var totalLen = 16 + data.Length;
-        using var owner = MemoryPool<byte>.Shared.Rent(totalLen);
-        prefix.TryWriteBytes(owner.Memory.Span, true, out _);
-        data.CopyTo(owner.Memory.Span[16..]);
-        return NewGuid(owner.Memory.Span[..totalLen]);
     }
 
     [Pure]
