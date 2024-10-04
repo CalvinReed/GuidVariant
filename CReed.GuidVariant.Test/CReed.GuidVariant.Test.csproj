@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CReed.GuidV7\CReed.GuidV7.csproj" />
+      <ProjectReference Include="..\CReed.GuidVariant\CReed.GuidVariant.csproj" />
     </ItemGroup>
 
 </Project>
