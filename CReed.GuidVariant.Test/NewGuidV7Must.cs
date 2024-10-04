@@ -1,6 +1,6 @@
 namespace CReed.Test;
 
-public class NewGuidMust
+public class NewGuidV7Must
 {
     [Fact]
     public void HaveCorrectMarkers()

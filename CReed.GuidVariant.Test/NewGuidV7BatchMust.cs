@@ -1,6 +1,6 @@
 namespace CReed.Test;
 
-public class NewGuidBatchMust
+public class NewGuidV7BatchMust
 {
     [Fact]
     public void HaveCorrectMarkers()
