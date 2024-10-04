@@ -49,7 +49,7 @@ public static class GuidV5
     {
         public override int Read(Span<byte> buffer)
         {
-            var prefixBytesRead = base.Read(buffer);
+            var prefixBytesRead = ReadPrefix(buffer);
             if (prefixBytesRead != 0)
             {
                 return prefixBytesRead;
@@ -60,7 +60,7 @@ public static class GuidV5
 
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
-            var prefixBytesRead = base.Read(buffer.Span);
+            var prefixBytesRead = ReadPrefix(buffer.Span);
             if (prefixBytesRead != 0)
             {
                 return prefixBytesRead;
@@ -76,7 +76,7 @@ public static class GuidV5
 
         public override int Read(Span<byte> buffer)
         {
-            var prefixBytesRead = base.Read(buffer);
+            var prefixBytesRead = ReadPrefix(buffer);
             if (prefixBytesRead != 0)
             {
                 return prefixBytesRead;
@@ -94,7 +94,7 @@ public static class GuidV5
     {
         private bool prefixRead;
 
-        public override int Read(Span<byte> buffer)
+        protected int ReadPrefix(Span<byte> buffer)
         {
             if (prefixRead)
             {
