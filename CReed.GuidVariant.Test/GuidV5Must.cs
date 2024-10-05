@@ -27,12 +27,15 @@ public class GuidV5Must
         Assert.Equal(guid1, guid3);
     }
 
-    public static IEnumerable<object[]> GenerateInputs()
+    public static TheoryData<Guid, byte[]> GenerateInputs()
     {
-        yield return [Guid.Empty, Array.Empty<byte>()];
-
-        var data = new byte[0x1_0000];
+        var prefix = Guid.NewGuid();
+        var data = new byte[0x1000];
         Random.Shared.NextBytes(data);
-        yield return [Guid.NewGuid(), data];
+        return new TheoryData<Guid, byte[]>
+        {
+            { Guid.Empty, [] },
+            { prefix, data }
+        };
     }
 }
