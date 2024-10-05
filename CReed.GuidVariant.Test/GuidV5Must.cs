@@ -2,12 +2,17 @@ namespace CReed.Test;
 
 public class GuidV5Must
 {
-    [Fact]
-    public void BeDeterministic()
+    [Theory, MemberData(nameof(GenerateInputs))]
+    public void BeDeterministic(Guid prefix, byte[] data)
     {
-        var prefix = Guid.NewGuid();
-        var data = new byte[0x10_0000];
-        Random.Shared.NextBytes(data);
+        var first = GuidV5.NewGuid(prefix, data);
+        var second = GuidV5.NewGuid(prefix, data);
+        Assert.Equal(first, second);
+    }
+
+    [Theory, MemberData(nameof(GenerateInputs))]
+    public void BeConsistent(Guid prefix, byte[] data)
+    {
         var guid1 = GuidV5.NewGuid(prefix, data);
 
         using var dataStream = new MemoryStream(data);
@@ -20,5 +25,14 @@ public class GuidV5Must
 
         Assert.Equal(guid1, guid2);
         Assert.Equal(guid1, guid3);
+    }
+
+    public static IEnumerable<object[]> GenerateInputs()
+    {
+        yield return [Guid.Empty, Array.Empty<byte>()];
+
+        var data = new byte[0x1_0000];
+        Random.Shared.NextBytes(data);
+        yield return [Guid.NewGuid(), data];
     }
 }
