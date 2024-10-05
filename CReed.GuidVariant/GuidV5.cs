@@ -14,10 +14,10 @@ public static class GuidV5
         return YieldGuid(hash);
     }
 
-    public static async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data)
+    public static async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data, CancellationToken token = default)
     {
         await using var shim = new StreamShim(prefix, data);
-        var hash = await SHA1.HashDataAsync(shim);
+        var hash = await SHA1.HashDataAsync(shim, token);
         return YieldGuid(hash);
     }
 
