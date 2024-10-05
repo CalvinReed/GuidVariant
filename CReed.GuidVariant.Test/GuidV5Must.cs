@@ -2,6 +2,13 @@ namespace CReed.Test;
 
 public class GuidV5Must
 {
+    [Theory, MemberData(nameof(TestVectors))]
+    public void BeCorrect(Guid prefix, byte[] data, Guid expected)
+    {
+        var actual = GuidV5.NewGuid(prefix, data);
+        Assert.Equal(expected, actual);
+    }
+
     [Theory, MemberData(nameof(GenerateInputs))]
     public void BeDeterministic(Guid prefix, byte[] data)
     {
@@ -25,6 +32,19 @@ public class GuidV5Must
 
         Assert.Equal(guid1, guid2);
         Assert.Equal(guid1, guid3);
+    }
+
+    public static TheoryData<Guid, byte[], Guid> TestVectors()
+    {
+        return new TheoryData<Guid, byte[], Guid>
+        {
+            // Source: https://datatracker.ietf.org/doc/html/rfc9562#name-example-of-a-uuidv5-value
+            {
+                Guid.Parse("6ba7b810-9dad-11d1-80b4-00c04fd430c8"),
+                "www.example.com"u8.ToArray(),
+                Guid.Parse("2ed6657d-e927-568b-95e1-2665a8aea6a2")
+            }
+        };
     }
 
     public static TheoryData<Guid, byte[]> GenerateInputs()
