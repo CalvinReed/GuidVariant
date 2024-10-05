@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace CReed.Test;
 
 public class GuidV5Must
@@ -43,6 +45,24 @@ public class GuidV5Must
                 Guid.Parse("6ba7b810-9dad-11d1-80b4-00c04fd430c8"),
                 "www.example.com"u8.ToArray(),
                 Guid.Parse("2ed6657d-e927-568b-95e1-2665a8aea6a2")
+            },
+            // Source: https://www.di-mgt.com.au/sha_testvectors.html ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq")
+            {
+                new Guid("abcdbcdecdefdefg"u8, true),
+                "efghfghighijhijkijkljklmklmnlmnomnopnopq"u8.ToArray(),
+                Guid.Parse("84983e44-1c3b-526e-baae-4aa1f95129e5")
+            },
+            // Source: https://www.di-mgt.com.au/sha_testvectors.html ("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu")
+            {
+                new Guid("abcdefghbcdefghi"u8, true),
+                "cdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"u8.ToArray(),
+                Guid.Parse("a49b2446-a02c-545b-b419-f995b6709125")
+            },
+            // Source: https://www.di-mgt.com.au/sha_testvectors.html (1,000,000 repetitions of "a")
+            {
+                new Guid("aaaaaaaaaaaaaaaa"u8, true),
+                Encoding.UTF8.GetBytes(new string('a', 1_000_000 - 16)),
+                Guid.Parse("34aa973c-d4c4-5aa4-b61e-eb2bdbad2731")
             }
         };
     }
