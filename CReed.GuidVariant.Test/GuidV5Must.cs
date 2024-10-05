@@ -50,7 +50,7 @@ public class GuidV5Must
     public static TheoryData<Guid, byte[]> GenerateInputs()
     {
         var prefix = Guid.NewGuid();
-        var data = new byte[0x1000];
+        var data = new byte[0x1003 - 16];
         Random.Shared.NextBytes(data);
         return new TheoryData<Guid, byte[]>
         {
