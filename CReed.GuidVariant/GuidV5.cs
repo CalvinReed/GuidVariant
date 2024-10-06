@@ -8,10 +8,8 @@ public static class GuidV5
 {
     public static Guid NewGuid(Guid prefix, Stream data)
     {
-        Span<byte> hash = stackalloc byte[20];
         using var shim = new StreamShim(prefix, data);
-        SHA1.HashData(shim, hash);
-        return YieldGuid(hash);
+        return YieldGuid(shim);
     }
 
     public static async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data, CancellationToken token = default)
@@ -24,10 +22,8 @@ public static class GuidV5
     [Pure]
     public static Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
     {
-        Span<byte> hash = stackalloc byte[20];
         using var shim = new MemoryShim(prefix, data);
-        SHA1.HashData(shim, hash);
-        return YieldGuid(hash);
+        return YieldGuid(shim);
     }
 
     [Pure]
@@ -35,6 +31,13 @@ public static class GuidV5
     {
         Span<byte> hash = stackalloc byte[20];
         SHA1.HashData(data, hash);
+        return YieldGuid(hash);
+    }
+
+    private static Guid YieldGuid(Shim shim)
+    {
+        Span<byte> hash = stackalloc byte[20];
+        SHA1.HashData(shim, hash);
         return YieldGuid(hash);
     }
 
