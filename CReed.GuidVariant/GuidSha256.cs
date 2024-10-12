@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace CReed;
 
-public static class GuidV5
+public static class GuidSha256
 {
     public static Guid NewGuid(Guid prefix, Stream data)
     {
@@ -14,7 +14,7 @@ public static class GuidV5
     public static async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data, CancellationToken token = default)
     {
         await using var shim = new StreamShim(prefix, data);
-        var hash = await SHA1.HashDataAsync(shim, token);
+        var hash = await SHA256.HashDataAsync(shim, token);
         return YieldGuid(hash);
     }
 
@@ -28,21 +28,21 @@ public static class GuidV5
     [Pure]
     public static Guid NewGuid(ReadOnlySpan<byte> data)
     {
-        Span<byte> hash = stackalloc byte[SHA1.HashSizeInBytes];
-        SHA1.HashData(data, hash);
+        Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
+        SHA256.HashData(data, hash);
         return YieldGuid(hash);
     }
 
     private static Guid YieldGuid(Shim shim)
     {
-        Span<byte> hash = stackalloc byte[SHA1.HashSizeInBytes];
-        SHA1.HashData(shim, hash);
+        Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
+        SHA256.HashData(shim, hash);
         return YieldGuid(hash);
     }
 
     private static Guid YieldGuid(Span<byte> hash)
     {
-        hash[6] = (byte)(hash[6] & 0x0F | 0x50);
+        hash[6] = (byte)(hash[6] & 0x0F | 0x80);
         hash[8] = (byte)(hash[8] & 0x3F | 0x80);
         return new Guid(hash[..16], true);
     }
