@@ -26,6 +26,19 @@ public static class GuidV5
     }
 
     [Pure]
+    public static Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
+    {
+        using var shim = new StringShim(prefix, data);
+        return YieldGuid(shim);
+    }
+
+    [Pure]
+    public static Guid NewGuid(Guid prefix, string? data)
+    {
+        return NewGuid(prefix, data.AsMemory());
+    }
+
+    [Pure]
     public static Guid NewGuid(ReadOnlySpan<byte> data)
     {
         Span<byte> hash = stackalloc byte[SHA1.HashSizeInBytes];
