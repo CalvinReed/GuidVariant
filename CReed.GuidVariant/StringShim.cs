@@ -2,15 +2,14 @@ using System.Text.Unicode;
 
 namespace CReed;
 
-internal sealed class StringShim(Guid prefix, ReadOnlyMemory<char> data) : PrefixShim(prefix)
+internal sealed class StringShim(Guid prefix, ReadOnlyMemory<char> data) : Shim(prefix)
 {
     private int charsReadTotal;
 
-    public override int Read(Span<byte> buffer)
+    protected override int ReadData(Span<byte> buffer)
     {
-        var prefixBytesRead = base.Read(buffer);
-        Utf8.FromUtf16(data.Span[charsReadTotal..], buffer[prefixBytesRead..], out var charsRead, out var bytesWritten);
+        Utf8.FromUtf16(data.Span[charsReadTotal..], buffer, out var charsRead, out var bytesWritten);
         charsReadTotal += charsRead;
-        return prefixBytesRead + bytesWritten;
+        return bytesWritten;
     }
 }

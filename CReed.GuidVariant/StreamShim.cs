@@ -1,18 +1,14 @@
 namespace CReed;
 
-internal sealed class StreamShim(Guid prefix, Stream data) : PrefixShim(prefix)
+internal sealed class StreamShim(Guid prefix, Stream data) : Shim(prefix)
 {
-    public override int Read(Span<byte> buffer)
+    protected override int ReadData(Span<byte> buffer)
     {
-        var prefixBytesRead = base.Read(buffer);
-        var dataBytesRead = data.Read(buffer[prefixBytesRead..]);
-        return prefixBytesRead + dataBytesRead;
+        return data.Read(buffer);
     }
 
-    public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+    protected override async ValueTask<int> ReadDataAsync(Memory<byte> buffer, CancellationToken cancellationToken)
     {
-        var prefixBytesRead = base.Read(buffer.Span);
-        var dataBytesRead = await data.ReadAsync(buffer[prefixBytesRead..], cancellationToken);
-        return prefixBytesRead + dataBytesRead;
+        return await data.ReadAsync(buffer, cancellationToken);
     }
 }
