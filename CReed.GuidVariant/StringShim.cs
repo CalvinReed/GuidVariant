@@ -9,13 +9,8 @@ internal sealed class StringShim(Guid prefix, ReadOnlyMemory<char> data) : Shim(
     public override int Read(Span<byte> buffer)
     {
         var prefixBytesRead = ReadPrefix(buffer);
-        if (prefixBytesRead != 0)
-        {
-            return prefixBytesRead;
-        }
-
-        Utf8.FromUtf16(data.Span[charsReadTotal..], buffer, out var charsRead, out var bytesWritten);
+        Utf8.FromUtf16(data.Span[charsReadTotal..], buffer[prefixBytesRead..], out var charsRead, out var bytesWritten);
         charsReadTotal += charsRead;
-        return bytesWritten;
+        return prefixBytesRead + bytesWritten;
     }
 }

@@ -7,15 +7,11 @@ internal sealed class MemoryShim(Guid prefix, ReadOnlyMemory<byte> data) : Shim(
     public override int Read(Span<byte> buffer)
     {
         var prefixBytesRead = ReadPrefix(buffer);
-        if (prefixBytesRead != 0)
-        {
-            return prefixBytesRead;
-        }
-
-        var end = Math.Min(data.Length, bytesRead + buffer.Length);
+        var destination = buffer[prefixBytesRead..];
+        var end = Math.Min(data.Length, bytesRead + destination.Length);
         var slice = data.Span[bytesRead..end];
-        slice.CopyTo(buffer);
+        slice.CopyTo(destination);
         bytesRead = end;
-        return slice.Length;
+        return prefixBytesRead + slice.Length;
     }
 }
