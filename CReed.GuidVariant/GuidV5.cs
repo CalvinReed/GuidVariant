@@ -46,10 +46,10 @@ public static class GuidV5
         return YieldGuid(hash);
     }
 
-    private static Guid YieldGuid(Shim shim)
+    private static Guid YieldGuid(Stream stream)
     {
         Span<byte> hash = stackalloc byte[SHA1.HashSizeInBytes];
-        SHA1.HashData(shim, hash);
+        SHA1.HashData(stream, hash);
         return YieldGuid(hash);
     }
 

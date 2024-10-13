@@ -2,11 +2,11 @@ using System.Diagnostics;
 
 namespace CReed;
 
-internal abstract class Shim(Guid prefix) : Stream
+internal abstract class PrefixShim(Guid prefix) : Stream
 {
     private bool prefixRead;
 
-    protected int ReadPrefix(Span<byte> buffer)
+    public override int Read(Span<byte> buffer)
     {
         if (prefixRead)
         {
