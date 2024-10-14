@@ -1,34 +1,34 @@
 namespace CReed.Test;
 
-public class GuidSha256Must
+public class GuidV256Must
 {
     [Theory, MemberData(nameof(TestVectors))]
     public void BeCorrect(Guid prefix, string data, Guid expected)
     {
-        var actual = GuidSha256.NewGuid(prefix, data);
+        var actual = GuidV256.NewGuid(prefix, data);
         Assert.Equal(expected, actual);
     }
 
     [Theory, MemberData(nameof(GenerateInputs))]
     public void BeDeterministic(Guid prefix, byte[] data)
     {
-        var first = GuidSha256.NewGuid(prefix, data);
-        var second = GuidSha256.NewGuid(prefix, data);
+        var first = GuidV256.NewGuid(prefix, data);
+        var second = GuidV256.NewGuid(prefix, data);
         Assert.Equal(first, second);
     }
 
     [Theory, MemberData(nameof(GenerateInputs))]
     public void BeConsistent(Guid prefix, byte[] data)
     {
-        var guid1 = GuidSha256.NewGuid(prefix, data);
+        var guid1 = GuidV256.NewGuid(prefix, data);
 
         using var dataStream = new MemoryStream(data);
-        var guid2 = GuidSha256.NewGuid(prefix, dataStream);
+        var guid2 = GuidV256.NewGuid(prefix, dataStream);
 
         var dataFull = new byte[16 + data.Length];
         prefix.TryWriteBytes(dataFull, true, out _);
         data.CopyTo(dataFull.AsSpan(16));
-        var guid3 = GuidSha256.NewGuid(dataFull);
+        var guid3 = GuidV256.NewGuid(dataFull);
 
         Assert.Equal(guid1, guid2);
         Assert.Equal(guid1, guid3);

@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace CReed;
 
-public static class GuidSha256
+public static class GuidV256
 {
     public static Guid NewGuid(Guid prefix, Stream data)
     {
