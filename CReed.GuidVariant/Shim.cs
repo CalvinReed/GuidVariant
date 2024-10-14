@@ -20,27 +20,19 @@ internal abstract class Shim(Guid prefix) : Stream
         return prefixBytesRead + dataBytesRead;
     }
 
-    private int ReadPrefix(Span<byte> buffer)
-    {
-        if (prefixRead)
-        {
-            return 0;
-        }
-
-        prefixRead = prefix.TryWriteBytes(buffer, true, out var bytesWritten);
-        if (prefixRead)
-        {
-            return bytesWritten;
-        }
-
-        throw new UnreachableException();
-    }
-
     protected abstract int ReadData(Span<byte> buffer);
 
     protected virtual ValueTask<int> ReadDataAsync(Memory<byte> buffer, CancellationToken token)
     {
         return ValueTask.FromResult(ReadData(buffer.Span));
+    }
+
+    private int ReadPrefix(Span<byte> buffer)
+    {
+        if (prefixRead) return 0;
+        prefixRead = prefix.TryWriteBytes(buffer, true, out var bytesWritten);
+        if (prefixRead) return bytesWritten;
+        throw new UnreachableException();
     }
 
     public override void Flush() { }
