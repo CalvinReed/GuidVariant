@@ -5,6 +5,19 @@ namespace CReed;
 
 public static class GuidV256
 {
+    [Pure]
+    public static Guid NewGuid(Guid prefix, string? data)
+    {
+        return NewGuid(prefix, data.AsMemory());
+    }
+
+    [Pure]
+    public static Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
+    {
+        using var shim = new StringShim(prefix, data);
+        return YieldGuid(shim);
+    }
+
     public static Guid NewGuid(Guid prefix, Stream data)
     {
         using var shim = new StreamShim(prefix, data);
@@ -23,19 +36,6 @@ public static class GuidV256
     {
         using var shim = new MemoryShim(prefix, data);
         return YieldGuid(shim);
-    }
-
-    [Pure]
-    public static Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
-    {
-        using var shim = new StringShim(prefix, data);
-        return YieldGuid(shim);
-    }
-
-    [Pure]
-    public static Guid NewGuid(Guid prefix, string? data)
-    {
-        return NewGuid(prefix, data.AsMemory());
     }
 
     [Pure]
