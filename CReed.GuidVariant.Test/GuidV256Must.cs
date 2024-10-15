@@ -38,7 +38,7 @@ public class GuidV256Must
     {
         return new TheoryData<Guid, string, Guid>
         {
-            // Source: https://datatracker.ietf.org/doc/html/rfc9562#name-example-of-a-uuidv5-value
+            // Source: https://datatracker.ietf.org/doc/html/rfc9562#name-example-of-a-uuidv8-value-n
             {
                 Guid.Parse("6ba7b810-9dad-11d1-80b4-00c04fd430c8"),
                 "www.example.com",
