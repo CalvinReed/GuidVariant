@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace CReed;
 
 internal abstract class Shim(Guid prefix) : Stream
@@ -32,7 +30,7 @@ internal abstract class Shim(Guid prefix) : Stream
         if (prefixRead) return 0;
         prefixRead = prefix.TryWriteBytes(buffer, true, out var bytesWritten);
         if (prefixRead) return bytesWritten;
-        throw new UnreachableException();
+        throw new ArgumentException($"Buffer is too short for prefix GUID ({buffer.Length} bytes)", nameof(buffer));
     }
 
     public override void Flush() { }
