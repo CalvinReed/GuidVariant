@@ -2,39 +2,45 @@ using System.Diagnostics.Contracts;
 
 namespace CReed;
 
-public abstract class HashGuid(Guid prefix)
+public abstract class HashGuid
 {
     private const int MaxHashSize = 64;
+
+    public static HashGuid V3 { get; } = new GuidV3();
+
+    public static HashGuid V5 { get; } = new GuidV5();
+
+    public static HashGuid Sha256 { get; } = new GuidV256();
 
     protected abstract int Version { get; }
 
     [Pure]
-    public Guid NewGuid(string? data)
+    public Guid NewGuid(Guid prefix, string? data)
     {
-        return NewGuid(data.AsMemory());
+        return NewGuid(prefix, data.AsMemory());
     }
 
     [Pure]
-    public Guid NewGuid(ReadOnlyMemory<char> data)
+    public Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
     {
         using var shim = new StringShim(prefix, data);
         return YieldGuid(shim);
     }
 
     [Pure]
-    public Guid NewGuid(ReadOnlyMemory<byte> data)
+    public Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
     {
         using var shim = new MemoryShim(prefix, data);
         return YieldGuid(shim);
     }
 
-    public Guid NewGuid(Stream data)
+    public Guid NewGuid(Guid prefix, Stream data)
     {
         using var shim = new StreamShim(prefix, data);
         return YieldGuid(shim);
     }
 
-    public async ValueTask<Guid> NewGuidAsync(Stream data, CancellationToken token = default)
+    public async ValueTask<Guid> NewGuidAsync(Guid prefix, Stream data, CancellationToken token = default)
     {
         await using var shim = new StreamShim(prefix, data);
         var hash = await HashDataAsync(shim, token);

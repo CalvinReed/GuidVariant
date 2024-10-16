@@ -5,29 +5,24 @@ public class GuidV256Must
     [Theory, MemberData(nameof(TestVectors))]
     public void BeCorrect(Guid prefix, string data, Guid expected)
     {
-        var guidV256 = new GuidV256(prefix);
-        var actual = guidV256.NewGuid(data);
+        var actual = HashGuid.Sha256.NewGuid(prefix, data);
         Assert.Equal(expected, actual);
     }
 
     [Theory, MemberData(nameof(GenerateInputs))]
     public void BeDeterministic(Guid prefix, byte[] data)
     {
-        var guidV256 = new GuidV256(prefix);
-        var first = guidV256.NewGuid(data);
-        var second = guidV256.NewGuid(data);
+        var first = HashGuid.Sha256.NewGuid(prefix, data);
+        var second = HashGuid.Sha256.NewGuid(prefix, data);
         Assert.Equal(first, second);
     }
 
     [Theory, MemberData(nameof(GenerateInputs))]
     public void BeConsistent(Guid prefix, byte[] data)
     {
-        var guidV256 = new GuidV256(prefix);
-        var guid1 = guidV256.NewGuid(data);
-
         using var dataStream = new MemoryStream(data);
-        var guid2 = guidV256.NewGuid(dataStream);
-
+        var guid1 = HashGuid.Sha256.NewGuid(prefix, data);
+        var guid2 = HashGuid.Sha256.NewGuid(prefix, dataStream);
         Assert.Equal(guid1, guid2);
     }
 

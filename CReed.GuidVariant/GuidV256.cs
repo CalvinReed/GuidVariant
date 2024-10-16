@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 
 namespace CReed;
 
-public sealed class GuidV256(Guid prefix) : HashGuid(prefix)
+internal sealed class GuidV256 : HashGuid
 {
     protected override int Version => 0x80;
 
