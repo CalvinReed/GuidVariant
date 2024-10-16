@@ -7,8 +7,8 @@ internal sealed class StreamShim(Guid prefix, Stream data) : Shim(prefix)
         return data.Read(buffer);
     }
 
-    protected override async ValueTask<int> ReadDataAsync(Memory<byte> buffer, CancellationToken cancellationToken)
+    protected override ValueTask<int> ReadDataAsync(Memory<byte> buffer, CancellationToken cancellationToken)
     {
-        return await data.ReadAsync(buffer, cancellationToken);
+        return data.ReadAsync(buffer, cancellationToken);
     }
 }
