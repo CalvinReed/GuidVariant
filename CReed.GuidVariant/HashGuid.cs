@@ -21,6 +21,13 @@ public abstract class HashGuid(Guid prefix)
         return YieldGuid(shim);
     }
 
+    [Pure]
+    public Guid NewGuid(ReadOnlyMemory<byte> data)
+    {
+        using var shim = new MemoryShim(prefix, data);
+        return YieldGuid(shim);
+    }
+
     public Guid NewGuid(Stream data)
     {
         using var shim = new StreamShim(prefix, data);
@@ -33,15 +40,6 @@ public abstract class HashGuid(Guid prefix)
         var hash = await HashDataAsync(shim, token);
         return YieldGuid(hash);
     }
-
-    [Pure]
-    public Guid NewGuid(ReadOnlyMemory<byte> data)
-    {
-        using var shim = new MemoryShim(prefix, data);
-        return YieldGuid(shim);
-    }
-
-    protected abstract void HashData(ReadOnlySpan<byte> source, Span<byte> destination);
 
     protected abstract void HashData(Stream source, Span<byte> destination);
 
