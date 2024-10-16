@@ -15,12 +15,6 @@ public abstract class HashGuid
     protected abstract int Version { get; }
 
     [Pure]
-    public Guid NewGuid(Guid prefix, string? data)
-    {
-        return NewGuid(prefix, data.AsMemory());
-    }
-
-    [Pure]
     public Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
     {
         using var shim = new StringShim(prefix, data);
