@@ -5,33 +5,30 @@ public class GuidV5Must
     [Theory, MemberData(nameof(TestVectors))]
     public void BeCorrect(Guid prefix, string data, Guid expected)
     {
-        var actual = GuidV5.NewGuid(prefix, data);
+        var guidV5 = new GuidV5(prefix);
+        var actual = guidV5.NewGuid(data);
         Assert.Equal(expected, actual);
     }
 
     [Theory, MemberData(nameof(GenerateInputs))]
     public void BeDeterministic(Guid prefix, byte[] data)
     {
-        var first = GuidV5.NewGuid(prefix, data);
-        var second = GuidV5.NewGuid(prefix, data);
+        var guidV5 = new GuidV5(prefix);
+        var first = guidV5.NewGuid(data);
+        var second = guidV5.NewGuid(data);
         Assert.Equal(first, second);
     }
 
     [Theory, MemberData(nameof(GenerateInputs))]
     public void BeConsistent(Guid prefix, byte[] data)
     {
-        var guid1 = GuidV5.NewGuid(prefix, data);
+        var guidV5 = new GuidV5(prefix);
+        var guid1 = guidV5.NewGuid(data);
 
         using var dataStream = new MemoryStream(data);
-        var guid2 = GuidV5.NewGuid(prefix, dataStream);
-
-        var dataFull = new byte[16 + data.Length];
-        prefix.TryWriteBytes(dataFull, true, out _);
-        data.CopyTo(dataFull.AsSpan(16));
-        var guid3 = GuidV5.NewGuid(dataFull);
+        var guid2 = guidV5.NewGuid(dataStream);
 
         Assert.Equal(guid1, guid2);
-        Assert.Equal(guid1, guid3);
     }
 
     public static TheoryData<Guid, string, Guid> TestVectors()
