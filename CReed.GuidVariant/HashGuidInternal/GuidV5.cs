@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace CReed;
+namespace CReed.HashGuidInternal;
 
 internal sealed class GuidV5 : HashGuid
 {

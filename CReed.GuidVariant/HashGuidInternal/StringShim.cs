@@ -1,6 +1,6 @@
 using System.Text.Unicode;
 
-namespace CReed;
+namespace CReed.HashGuidInternal;
 
 internal sealed class StringShim(Guid prefix, ReadOnlyMemory<char> data) : Shim(prefix)
 {

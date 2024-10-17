@@ -1,4 +1,4 @@
-namespace CReed;
+namespace CReed.HashGuidInternal;
 
 internal sealed class StreamShim(Guid prefix, Stream data) : Shim(prefix)
 {

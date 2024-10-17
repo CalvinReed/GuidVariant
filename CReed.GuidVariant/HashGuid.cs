@@ -1,4 +1,5 @@
 using System.Diagnostics.Contracts;
+using CReed.HashGuidInternal;
 
 namespace CReed;
 

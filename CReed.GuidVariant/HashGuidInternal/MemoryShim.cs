@@ -1,4 +1,4 @@
-namespace CReed;
+namespace CReed.HashGuidInternal;
 
 internal sealed class MemoryShim(Guid prefix, ReadOnlyMemory<byte> data) : Shim(prefix)
 {
