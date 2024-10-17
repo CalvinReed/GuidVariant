@@ -23,16 +23,16 @@ public abstract class HashGuid
     }
 
     [Pure]
-    public Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
+    public Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
     {
-        using var shim = new StringShim(prefix, data);
+        using var shim = new MemoryShim(prefix, data);
         return YieldGuid(shim);
     }
 
     [Pure]
-    public Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
+    public Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
     {
-        using var shim = new MemoryShim(prefix, data);
+        using var shim = new StringShim(prefix, data);
         return YieldGuid(shim);
     }
 
