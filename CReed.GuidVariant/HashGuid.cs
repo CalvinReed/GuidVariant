@@ -15,6 +15,14 @@ public abstract class HashGuid
     private protected abstract int Version { get; }
 
     [Pure]
+    public Guid NewGuid(ReadOnlySpan<byte> data)
+    {
+        Span<byte> hash = stackalloc byte[MaxHashSize];
+        HashData(data, hash);
+        return YieldGuid(hash);
+    }
+
+    [Pure]
     public Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
     {
         using var shim = new StringShim(prefix, data);
@@ -40,6 +48,8 @@ public abstract class HashGuid
         var hash = await HashDataAsync(shim, token);
         return YieldGuid(hash);
     }
+
+    private protected abstract void HashData(ReadOnlySpan<byte> source, Span<byte> destination);
 
     private protected abstract void HashData(Stream source, Span<byte> destination);
 

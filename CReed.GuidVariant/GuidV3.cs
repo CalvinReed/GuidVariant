@@ -6,6 +6,11 @@ internal sealed class GuidV3 : HashGuid
 {
     private protected override int Version => 0x30;
 
+    private protected override void HashData(ReadOnlySpan<byte> source, Span<byte> destination)
+    {
+        MD5.HashData(source, destination);
+    }
+
     private protected override void HashData(Stream source, Span<byte> destination)
     {
         MD5.HashData(source, destination);
