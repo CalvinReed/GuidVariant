@@ -4,14 +4,14 @@ namespace CReed;
 
 internal sealed class GuidV5 : HashGuid
 {
-    protected override int Version => 0x50;
+    private protected override int Version => 0x50;
 
-    protected override void HashData(Stream source, Span<byte> destination)
+    private protected override void HashData(Stream source, Span<byte> destination)
     {
         SHA1.HashData(source, destination);
     }
 
-    protected override ValueTask<byte[]> HashDataAsync(Stream source, CancellationToken token)
+    private protected override ValueTask<byte[]> HashDataAsync(Stream source, CancellationToken token)
     {
         return SHA1.HashDataAsync(source, token);
     }

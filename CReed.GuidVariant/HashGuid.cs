@@ -4,7 +4,7 @@ namespace CReed;
 
 public abstract class HashGuid
 {
-    private const int MaxHashSize = 64;
+    private const int MaxHashSize = 32;
 
     public static HashGuid V3 { get; } = new GuidV3();
 
@@ -12,7 +12,7 @@ public abstract class HashGuid
 
     public static HashGuid Sha256 { get; } = new GuidV256();
 
-    protected abstract int Version { get; }
+    private protected abstract int Version { get; }
 
     [Pure]
     public Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
@@ -41,9 +41,9 @@ public abstract class HashGuid
         return YieldGuid(hash);
     }
 
-    protected abstract void HashData(Stream source, Span<byte> destination);
+    private protected abstract void HashData(Stream source, Span<byte> destination);
 
-    protected abstract ValueTask<byte[]> HashDataAsync(Stream source, CancellationToken token);
+    private protected abstract ValueTask<byte[]> HashDataAsync(Stream source, CancellationToken token);
 
     private Guid YieldGuid(Stream stream)
     {
