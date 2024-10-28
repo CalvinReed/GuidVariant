@@ -1,5 +1,3 @@
-using System.Diagnostics.Contracts;
-
 namespace CReed.HashGuidInternal;
 
 internal abstract class HashGuidBase : IHashGuid
@@ -8,7 +6,6 @@ internal abstract class HashGuidBase : IHashGuid
 
     protected abstract int Version { get; }
 
-    [Pure]
     public Guid NewGuid(ReadOnlySpan<byte> data)
     {
         Span<byte> hash = stackalloc byte[MaxHashSize];
@@ -16,14 +13,12 @@ internal abstract class HashGuidBase : IHashGuid
         return YieldGuid(hash);
     }
 
-    [Pure]
     public Guid NewGuid(Guid prefix, ReadOnlyMemory<byte> data)
     {
         using var shim = new MemoryShim(prefix, data);
         return YieldGuid(shim);
     }
 
-    [Pure]
     public Guid NewGuid(Guid prefix, ReadOnlyMemory<char> data)
     {
         using var shim = new StringShim(prefix, data);
