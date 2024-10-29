@@ -30,7 +30,7 @@ internal abstract class Shim(Guid prefix) : Stream
         if (prefixRead) return 0;
         prefixRead = prefix.TryWriteBytes(buffer, true, out var bytesWritten);
         if (prefixRead) return bytesWritten;
-        throw new ArgumentException("Buffer is too short for prefix GUID", nameof(buffer));
+        throw new ArgumentException("Buffer is too short for prefix GUID.");
     }
 
     public override void Flush() { }
