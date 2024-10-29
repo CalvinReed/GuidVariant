@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace CReed.HashGuidInternal;
 
 internal abstract class Shim(Guid prefix) : Stream
@@ -22,7 +24,7 @@ internal abstract class Shim(Guid prefix) : Stream
 
     protected virtual ValueTask<int> ReadDataAsync(Memory<byte> buffer, CancellationToken token)
     {
-        return ValueTask.FromResult(ReadData(buffer.Span));
+        throw new UnreachableException();
     }
 
     private int ReadPrefix(Span<byte> buffer)
