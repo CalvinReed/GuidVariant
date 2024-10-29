@@ -30,6 +30,11 @@ public static class HashGuidExtension
     [Pure]
     public static unsafe Guid NewGuid(this IHashGuid hashGuid, Guid prefix, ReadOnlySpan<byte> data)
     {
+        if (data.IsEmpty)
+        {
+            return hashGuid.NewGuid(prefix, Stream.Null);
+        }
+
         fixed (byte* ptr = data)
         {
             using var stream = new UnmanagedMemoryStream(ptr, data.Length);
