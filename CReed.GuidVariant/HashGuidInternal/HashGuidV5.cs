@@ -6,11 +6,6 @@ internal sealed class HashGuidV5 : HashGuidBase
 {
     protected override int Version => 0x50;
 
-    protected override void HashData(ReadOnlySpan<byte> source, Span<byte> destination)
-    {
-        SHA1.HashData(source, destination);
-    }
-
     protected override void HashData(Stream source, Span<byte> destination)
     {
         SHA1.HashData(source, destination);
