@@ -1,10 +1,12 @@
+using System.Security.Cryptography;
 using CReed.CustomStream;
 
 namespace CReed.HashGuidInternal;
 
 internal abstract class HashGuidBase : IHashGuid
 {
-    private const int MaxHashSize = 32;
+    private const int MaxHashSize = SHA256.HashSizeInBytes;
+    private const int GuidSize = 16;
 
     protected abstract int Version { get; }
 
@@ -31,6 +33,6 @@ internal abstract class HashGuidBase : IHashGuid
     {
         hash[6] = (byte)(hash[6] & 0x0F | Version);
         hash[8] = (byte)(hash[8] & 0x3F | 0x80);
-        return new Guid(hash[..16], true);
+        return new Guid(hash[..GuidSize], true);
     }
 }
