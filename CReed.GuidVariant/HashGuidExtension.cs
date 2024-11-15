@@ -42,6 +42,7 @@ public static class HashGuidExtension
     [Pure]
     public static unsafe Guid NewGuid(this IHashGuid hashGuid, Guid prefix, ReadOnlySpan<byte> data)
     {
+        // Handle empty spans to avoid null pointer issues when creating UnmanagedMemoryStream
         if (data.IsEmpty)
         {
             return hashGuid.NewGuid(prefix, Stream.Null);
