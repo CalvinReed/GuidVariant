@@ -21,6 +21,21 @@ public static class HashGuidExtension
     }
 
     [Pure]
+    public static unsafe Guid NewGuid(this IHashGuid hashGuid, Guid prefix, ReadOnlySpan<char> data)
+    {
+        if (data.IsEmpty)
+        {
+            return hashGuid.NewGuid(prefix, Stream.Null);
+        }
+
+        fixed (char* ptr = data)
+        {
+            using var stream = new UnmanagedUtf8Stream(ptr, data.Length);
+            return hashGuid.NewGuid(prefix, stream);
+        }
+    }
+
+    [Pure]
     public static Guid NewGuid(this IHashGuid hashGuid, Guid prefix, byte[] data)
     {
         using var stream = new MemoryStream(data, false);

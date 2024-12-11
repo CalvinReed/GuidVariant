@@ -5,7 +5,7 @@ public class GuidV256Must
     [Theory, MemberData(nameof(TestVectors))]
     public void BeCorrect(Guid prefix, string data, Guid expected)
     {
-        var actual = HashGuid.Sha256.NewGuid(prefix, data);
+        var actual = HashGuid.Sha256.NewGuid(prefix, data.AsSpan());
         Assert.Equal(expected, actual);
     }
 
