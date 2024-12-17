@@ -1,6 +1,3 @@
-using System.Buffers;
-using System.Text.Unicode;
-
 namespace CReed.CustomStream;
 
 internal sealed class Utf8Stream(ReadOnlyMemory<char> chars) : ReadOnlyStream
@@ -9,17 +6,7 @@ internal sealed class Utf8Stream(ReadOnlyMemory<char> chars) : ReadOnlyStream
 
     public override int Read(Span<byte> buffer)
     {
-        var status = Utf8.FromUtf16(
-            chars.Span[charsReadTotal..],
-            buffer,
-            out var charsRead,
-            out var bytesWritten,
-            false);
-        if (status == OperationStatus.InvalidData)
-        {
-            throw new ArgumentException("Input has an invalid byte sequence.");
-        }
-
+        var (charsRead, bytesWritten) = Utf8Util.ConvertChars(chars.Span[charsReadTotal..], buffer);
         charsReadTotal += charsRead;
         return bytesWritten;
     }
