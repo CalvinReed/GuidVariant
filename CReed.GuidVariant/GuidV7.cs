@@ -4,8 +4,18 @@ using System.Security.Cryptography;
 
 namespace CReed;
 
+/// <summary>
+/// Methods for generating timestamp-based Guids.
+/// </summary>
 public static class GuidV7
 {
+    /// <summary>
+    /// Generates a new, timestamp-based <see cref="Guid"/>.
+    /// </summary>
+    /// <returns>A new GUID object</returns>
+    /// <remarks>
+    /// Guids generated within the same millisecond are NOT guaranteed to be in-order.
+    /// </remarks>
     [Pure]
     public static Guid NewGuid()
     {
@@ -18,6 +28,12 @@ public static class GuidV7
         return new Guid(span, true);
     }
 
+    /// <summary>
+    /// Fills a <see cref="Span{T}"/> with timestamp-based Guids.
+    /// </summary>
+    /// <remarks>
+    /// The Guids generated for a given invocation are guaranteed to be in-order.
+    /// </remarks>
     public static void NewGuidBatch(Span<Guid> span)
     {
         const int counterMax = 0x1000;

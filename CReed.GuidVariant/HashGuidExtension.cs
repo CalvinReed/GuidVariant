@@ -6,6 +6,7 @@ namespace CReed;
 
 public static class HashGuidExtension
 {
+    /// <inheritdoc cref="NewGuid(CReed.IHashGuid,System.Guid,ReadOnlyMemory{char})"/>
     [Pure]
     public static Guid NewGuid(this IHashGuid hashGuid, Guid prefix, string data)
     {
@@ -13,6 +14,10 @@ public static class HashGuidExtension
         return hashGuid.NewGuid(prefix, data.AsMemory());
     }
 
+    /// <inheritdoc cref="IHashGuid.NewGuid"/>
+    /// <remarks>
+    /// Characters are treated as UTF-8 bytes
+    /// </remarks>
     [Pure]
     public static Guid NewGuid(this IHashGuid hashGuid, Guid prefix, ReadOnlyMemory<char> data)
     {
@@ -20,6 +25,7 @@ public static class HashGuidExtension
         return hashGuid.NewGuid(prefix, stream);
     }
 
+    /// <inheritdoc cref="IHashGuid.NewGuid"/>
     [Pure]
     public static unsafe Guid NewGuid(this IHashGuid hashGuid, Guid prefix, ReadOnlySpan<char> data)
     {
@@ -35,6 +41,7 @@ public static class HashGuidExtension
         }
     }
 
+    /// <inheritdoc cref="IHashGuid.NewGuid"/>
     [Pure]
     public static Guid NewGuid(this IHashGuid hashGuid, Guid prefix, byte[] data)
     {
@@ -42,6 +49,7 @@ public static class HashGuidExtension
         return hashGuid.NewGuid(prefix, stream);
     }
 
+    /// <inheritdoc cref="IHashGuid.NewGuid"/>
     [Pure]
     public static Guid NewGuid(this IHashGuid hashGuid, Guid prefix, ReadOnlyMemory<byte> data)
     {
@@ -54,6 +62,7 @@ public static class HashGuidExtension
         return hashGuid.NewGuid(prefix, stream);
     }
 
+    /// <inheritdoc cref="IHashGuid.NewGuid"/>
     [Pure]
     public static unsafe Guid NewGuid(this IHashGuid hashGuid, Guid prefix, ReadOnlySpan<byte> data)
     {
