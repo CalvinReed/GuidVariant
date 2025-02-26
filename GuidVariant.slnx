@@ -1,4 +1,0 @@
-﻿<Solution>
-  <Project Path="CReed.GuidVariant.Test\CReed.GuidVariant.Test.csproj" Type="Classic C#" />
-  <Project Path="CReed.GuidVariant\CReed.GuidVariant.csproj" Type="Classic C#" />
-</Solution>
