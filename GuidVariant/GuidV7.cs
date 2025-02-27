@@ -2,7 +2,7 @@ using System.Buffers.Binary;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 
-namespace CReed;
+namespace GuidVariant;
 
 /// <summary>
 /// Methods for generating timestamp-based Guids.

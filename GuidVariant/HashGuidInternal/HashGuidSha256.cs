@@ -1,18 +1,18 @@
 using System.Security.Cryptography;
 
-namespace CReed.HashGuidInternal;
+namespace GuidVariant.HashGuidInternal;
 
-internal sealed class HashGuidV5 : HashGuidBase
+internal sealed class HashGuidSha256 : HashGuidBase
 {
-    protected override int Version => 0x50;
+    protected override int Version => 0x80;
 
     protected override void HashData(Stream source, Span<byte> destination)
     {
-        SHA1.HashData(source, destination);
+        SHA256.HashData(source, destination);
     }
 
     protected override ValueTask<byte[]> HashDataAsync(Stream source, CancellationToken token)
     {
-        return SHA1.HashDataAsync(source, token);
+        return SHA256.HashDataAsync(source, token);
     }
 }

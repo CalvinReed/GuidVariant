@@ -1,4 +1,4 @@
-namespace CReed;
+namespace GuidVariant;
 
 public interface IHashGuid
 {

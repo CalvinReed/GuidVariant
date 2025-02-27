@@ -1,7 +1,7 @@
 using System.Buffers;
 using System.Text.Unicode;
 
-namespace CReed;
+namespace GuidVariant;
 
 internal static class Utf8Util
 {

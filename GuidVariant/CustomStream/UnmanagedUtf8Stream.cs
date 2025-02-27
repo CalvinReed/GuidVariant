@@ -1,4 +1,4 @@
-namespace CReed.CustomStream;
+namespace GuidVariant.CustomStream;
 
 internal unsafe class UnmanagedUtf8Stream(char* ptr, int length) : ReadOnlyStream
 {

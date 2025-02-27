@@ -6,7 +6,6 @@
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <RootNamespace>CReed.Test</RootNamespace>
         <RollForward>Major</RollForward>
     </PropertyGroup>
 
@@ -28,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CReed.GuidVariant\CReed.GuidVariant.csproj" />
+      <ProjectReference Include="..\GuidVariant\GuidVariant.csproj" />
     </ItemGroup>
 
 </Project>

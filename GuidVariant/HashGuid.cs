@@ -1,6 +1,6 @@
-using CReed.HashGuidInternal;
+using GuidVariant.HashGuidInternal;
 
-namespace CReed;
+namespace GuidVariant;
 
 /// <summary>
 /// Methods for generating namespace-based Guids.

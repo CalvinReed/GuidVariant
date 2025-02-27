@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
-using CReed.CustomStream;
+using GuidVariant.CustomStream;
 
-namespace CReed.HashGuidInternal;
+namespace GuidVariant.HashGuidInternal;
 
 internal abstract class HashGuidBase : IHashGuid
 {

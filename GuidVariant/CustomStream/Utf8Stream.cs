@@ -1,4 +1,4 @@
-namespace CReed.CustomStream;
+namespace GuidVariant.CustomStream;
 
 internal sealed class Utf8Stream(ReadOnlyMemory<char> chars) : ReadOnlyStream
 {

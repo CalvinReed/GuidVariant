@@ -1,4 +1,4 @@
-namespace CReed.CustomStream;
+namespace GuidVariant.CustomStream;
 
 internal abstract class ReadOnlyStream : Stream
 {

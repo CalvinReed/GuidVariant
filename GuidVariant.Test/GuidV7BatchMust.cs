@@ -1,4 +1,4 @@
-namespace CReed.Test;
+namespace GuidVariant.Test;
 
 public class GuidV7BatchMust
 {

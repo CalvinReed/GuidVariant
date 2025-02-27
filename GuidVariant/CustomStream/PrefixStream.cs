@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace CReed.CustomStream;
+namespace GuidVariant.CustomStream;
 
 internal sealed class PrefixStream(Guid prefix, Stream stream) : ReadOnlyStream
 {

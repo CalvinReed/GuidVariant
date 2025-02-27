@@ -1,12 +1,12 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
-using CReed.CustomStream;
+using GuidVariant.CustomStream;
 
-namespace CReed;
+namespace GuidVariant;
 
 public static class HashGuidExtension
 {
-    /// <inheritdoc cref="NewGuid(CReed.IHashGuid,System.Guid,ReadOnlyMemory{char})"/>
+    /// <inheritdoc cref="NewGuid(GuidVariant.IHashGuid,System.Guid,System.ReadOnlyMemory{char})"/>
     [Pure]
     public static Guid NewGuid(this IHashGuid hashGuid, Guid prefix, string data)
     {

@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CReed.GuidVariant", "CReed.GuidVariant\CReed.GuidVariant.csproj", "{6017CC99-A803-4985-87D4-C560B49FF788}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuidVariant", "GuidVariant\GuidVariant.csproj", "{6017CC99-A803-4985-87D4-C560B49FF788}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CReed.GuidVariant.Test", "CReed.GuidVariant.Test\CReed.GuidVariant.Test.csproj", "{E40FE47E-4F08-4D01-B89C-8DFF7956A532}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuidVariant.Test", "GuidVariant.Test\GuidVariant.Test.csproj", "{E40FE47E-4F08-4D01-B89C-8DFF7956A532}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
