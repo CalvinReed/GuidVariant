@@ -12,9 +12,8 @@ public static class GuidV7
     /// <summary>
     /// Generates a new, timestamp-based <see cref="Guid"/>.
     /// </summary>
-    /// <returns>A new GUID object</returns>
     /// <remarks>
-    /// Guids generated within the same millisecond are NOT guaranteed to be in-order.
+    /// Thread-safe. This method does NOT generate Guids monotonically.
     /// </remarks>
     [Pure]
     public static Guid NewGuid()
@@ -29,10 +28,12 @@ public static class GuidV7
     }
 
     /// <summary>
-    /// Fills a <see cref="Span{T}"/> with timestamp-based Guids.
+    /// Generates a batch of sequential, timestamp-based GUIDs into the provided span.
     /// </summary>
     /// <remarks>
-    /// The Guids generated for a given invocation are guaranteed to be in-order.
+    /// Thread-safe.
+    /// Monotonicity is guaranteed through a randomly-seeded counter on a per-batch basis.
+    /// This counter may overflow into the timestamp if the batch is large enough.
     /// </remarks>
     public static void NewGuidBatch(Span<Guid> span)
     {

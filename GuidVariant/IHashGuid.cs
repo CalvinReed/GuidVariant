@@ -8,7 +8,6 @@ public interface IHashGuid
     /// </summary>
     /// <param name="prefix">The namespace</param>
     /// <param name="data">The data</param>
-    /// <returns>A new GUID object</returns>
     Guid NewGuid(Guid prefix, Stream data);
 
     /// <inheritdoc cref="NewGuid"/>
