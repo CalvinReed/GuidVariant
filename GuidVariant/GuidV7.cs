@@ -33,7 +33,7 @@ public static class GuidV7
     /// <remarks>
     /// Thread-safe.
     /// Monotonicity is guaranteed through a randomly-seeded counter on a per-batch basis.
-    /// This counter may overflow into the timestamp if the batch is large enough.
+    /// This counter may overflow into the timestamp.
     /// </remarks>
     public static void NewGuidBatch(Span<Guid> span)
     {
