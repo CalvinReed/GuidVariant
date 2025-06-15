@@ -18,6 +18,9 @@ public static class GuidV7
     [Pure]
     public static Guid NewGuid()
     {
+#if NET9_0_OR_GREATER
+        return Guid.CreateVersion7();
+#else
         Span<byte> span = stackalloc byte[16];
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         BinaryPrimitives.WriteInt64BigEndian(span, timestamp << 16);
@@ -25,6 +28,7 @@ public static class GuidV7
         span[6] = (byte)(span[6] & 0x0F | 0x70);
         span[8] = (byte)(span[8] & 0x3F | 0x80);
         return new Guid(span, true);
+#endif
     }
 
     /// <summary>
