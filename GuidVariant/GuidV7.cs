@@ -41,19 +41,25 @@ public static class GuidV7
     /// </remarks>
     public static void NewGuidBatch(Span<Guid> span)
     {
-        const int counterMax = 0x1000;
-        Span<byte> buffer = stackalloc byte[16];
-        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        long counter = RandomNumberGenerator.GetInt32(counterMax);
-        foreach (ref var guid in span)
+        if (span.IsEmpty) return;
+        span[0] = NewGuid();
+        for (var i = 1; i < span.Length; i++)
         {
-            BinaryPrimitives.WriteInt64BigEndian(buffer, timestamp << 16 | 0x7000 | counter);
-            RandomNumberGenerator.Fill(buffer[8..]);
-            buffer[8] = (byte)(buffer[8] & 0x3F | 0x80);
-            guid = new Guid(buffer, true);
-            if (++counter < counterMax) continue;
-            timestamp++;
-            counter = RandomNumberGenerator.GetInt32(counterMax);
+            span[i] = Increment(span[i - 1]);
         }
+    }
+
+    private static Guid Increment(Guid guid)
+    {
+        Span<byte> span = stackalloc byte[16];
+        guid.TryWriteBytes(span, true, out _);
+        var head = BinaryPrimitives.ReadInt64BigEndian(span);
+        var inc = (head & 0x0FFF) == 0x0FFF
+            ? (uint)RandomNumberGenerator.GetInt32(0xF001, 0x1_0000)
+            : 0x01;
+        BinaryPrimitives.WriteInt64BigEndian(span, head + inc);
+        RandomNumberGenerator.Fill(span[8..]);
+        span[8] = (byte)(span[8] & 0x3F | 0x80);
+        return new Guid(span, true);
     }
 }
