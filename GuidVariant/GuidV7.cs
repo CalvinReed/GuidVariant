@@ -55,8 +55,8 @@ public static class GuidV7
         guid.TryWriteBytes(span, true, out _);
         var head = BinaryPrimitives.ReadInt64BigEndian(span);
         var inc = (head & 0x0FFF) == 0x0FFF
-            ? (uint)RandomNumberGenerator.GetInt32(0xF001, 0x1_0000)
-            : 0x01;
+            ? (uint)RandomNumberGenerator.GetInt32(0xF001, 0x1_0001)
+            : 1;
         BinaryPrimitives.WriteInt64BigEndian(span, head + inc);
         RandomNumberGenerator.Fill(span[8..]);
         span[8] = (byte)(span[8] & 0x3F | 0x80);
