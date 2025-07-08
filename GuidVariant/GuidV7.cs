@@ -18,12 +18,19 @@ public static class GuidV7
     [Pure]
     public static Guid NewGuid()
     {
+        return NewGuid(DateTimeOffset.UtcNow);
+    }
+
+    /// <inheritdoc cref="NewGuid()"/>
+    [Pure]
+    public static Guid NewGuid(DateTimeOffset timestamp)
+    {
 #if NET9_0_OR_GREATER
-        return Guid.CreateVersion7();
+        return Guid.CreateVersion7(timestamp);
 #else
         Span<byte> span = stackalloc byte[16];
-        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        BinaryPrimitives.WriteInt64BigEndian(span, timestamp << 16);
+        var ms = timestamp.ToUnixTimeMilliseconds();
+        BinaryPrimitives.WriteInt64BigEndian(span, ms << 16);
         RandomNumberGenerator.Fill(span[6..]);
         span[6] = (byte)(span[6] & 0x0F | 0x70);
         span[8] = (byte)(span[8] & 0x3F | 0x80);
@@ -47,6 +54,90 @@ public static class GuidV7
         {
             span[i] = Increment(span[i - 1]);
         }
+    }
+
+    public static DateTimeOffset GetTimestamp(this Guid guid)
+    {
+        if (guid.TryGetTimestamp(out var timestamp))
+        {
+            return timestamp;
+        }
+
+        throw new ArgumentException("Timestamps are only present in version 7 GUIDs.", nameof(guid));
+    }
+
+    public static bool TryGetTimestamp(this Guid guid, out DateTimeOffset timestamp)
+    {
+        if (!guid.IsVersion7())
+        {
+            timestamp = default;
+            return false;
+        }
+
+        Span<byte> span = stackalloc byte[16];
+        guid.TryWriteBytes(span, true, out _);
+        var head = BinaryPrimitives.ReadInt64BigEndian(span);
+        try
+        {
+            timestamp = DateTimeOffset.FromUnixTimeMilliseconds(head >>> 16);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            throw new ArgumentOutOfRangeException(nameof(guid), guid, "GUID contains timestamp too large for DateTimeOffset.");
+        }
+
+        return true;
+    }
+
+    public static Guid ToBlank(this Guid guid)
+    {
+        if (guid.TryToBlank(out var blank))
+        {
+            return blank;
+        }
+
+        throw new ArgumentException("Only version 7 GUIDs can be blanked out", nameof(guid));
+    }
+
+    public static bool TryToBlank(this Guid guid, out Guid blank)
+    {
+        if (!guid.IsVersion7())
+        {
+            blank = Guid.Empty;
+            return false;
+        }
+
+        Span<byte> span = stackalloc byte[16];
+        guid.TryWriteBytes(span);
+        span[6..].Clear();
+        span[6] = 0x70;
+        span[8] = 0x80;
+        blank = new Guid(span);
+        return true;
+    }
+
+    public static Guid CreateBlank(DateTimeOffset timestamp)
+    {
+        var ms = timestamp.ToUnixTimeMilliseconds();
+        ArgumentOutOfRangeException.ThrowIfNegative(ms, nameof(timestamp));
+        Span<byte> span = stackalloc byte[16];
+        span.Clear();
+        BinaryPrimitives.WriteInt64BigEndian(span, ms << 16);
+        span[6] = 0x70;
+        span[8] = 0x80;
+        return new Guid(span, true);
+    }
+
+    private static bool IsVersion7(this Guid guid)
+    {
+#if NET9_0_OR_GREATER
+        return guid.Version == 7;
+#else
+        Span<byte> bytes = stackalloc byte[16];
+        guid.TryWriteBytes(bytes);
+        var c = BinaryPrimitives.ReadInt16LittleEndian(bytes[6..]);
+        return c >>> 12 == 7;
+#endif
     }
 
     private static Guid Increment(Guid guid)
