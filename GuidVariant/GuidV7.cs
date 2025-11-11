@@ -25,17 +25,7 @@ public static class GuidV7
     [Pure]
     public static Guid NewGuid(DateTimeOffset timestamp)
     {
-#if NET9_0_OR_GREATER
         return Guid.CreateVersion7(timestamp);
-#else
-        Span<byte> span = stackalloc byte[16];
-        var ms = timestamp.ToUnixTimeMilliseconds();
-        BinaryPrimitives.WriteInt64BigEndian(span, ms << 16);
-        RandomNumberGenerator.Fill(span[6..]);
-        span[6] = (byte)(span[6] & 0x0F | 0x70);
-        span[8] = (byte)(span[8] & 0x3F | 0x80);
-        return new Guid(span, true);
-#endif
     }
 
     /// <summary>
@@ -130,14 +120,7 @@ public static class GuidV7
 
     private static bool IsVersion7(this Guid guid)
     {
-#if NET9_0_OR_GREATER
         return guid.Version == 7;
-#else
-        Span<byte> bytes = stackalloc byte[16];
-        guid.TryWriteBytes(bytes);
-        var c = BinaryPrimitives.ReadInt16LittleEndian(bytes[6..]);
-        return c >>> 12 == 7;
-#endif
     }
 
     private static Guid Increment(Guid guid)
